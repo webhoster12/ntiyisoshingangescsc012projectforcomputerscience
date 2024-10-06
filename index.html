@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editable CV - [Your Name]</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons (Optional) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHq6MPhXd7NF6YwDkIlfl+q4D1pK0QogVYFOqXjmHuCnA2V+g7I/dN5R4OXKcxAsIuKsaUrQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <!-- Embedded CSS -->
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        /* Navigation Styling */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #ffffff;
+            padding: 15px 30px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-logo {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #007bff;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-box {
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            transition: color 0.3s;
+            padding: 10px 20px;
+            margin: 0 5px;
+            position: relative;
+        }
+
+        .nav-box:hover {
+            color: #007bff;
+        }
+
+        /* Active Link Indicator */
+        .nav-box::after {
+            content: '';
+            display: block;
+            width: 0%;
+            height: 2px;
+            background: #007bff;
+            transition: width 0.3s;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        .nav-box:hover::after,
+        .nav-box.active::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            background-image: url('im.jpg'); /* Replace with your background image URL */
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            color: #ffffff;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Dark overlay for text readability */
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            animation: fadeInDown 1s ease-out forwards;
+            opacity: 0;
+        }
+
+        .hero p {
+            font-size: 1.5em;
+            margin-bottom: 30px;
+            animation: fadeInUp 1s ease-out forwards;
+            opacity: 0;
+        }
+
+        .hero button {
+            padding: 15px 30px;
+            font-size: 1em;
+            background-color: #007bff;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            animation: fadeIn 1s ease-out forwards;
+            opacity: 0;
+        }
+
+        .hero button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Section Styling */
+        .section {
+            padding: 100px 20px 60px 20px;
+            min-height: 100vh;
+            display: none;
+            background-color: #ffffff;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Editable Sections */
+        .editable {
+            border: 1px dashed #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .editable:focus {
+            outline: none;
+            border-color: #007bff;
+            background-color: #f0f8ff;
+        }
+
+        /* Section Titles */
+        .section-title {
+            margin-bottom: 10px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #007bff;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+        /* Download Button */
+        #download-pdf {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        #download-pdf:hover {
+            background-color: #218838;
+        }
+
+        /* Contact Form */
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .contact-form label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .contact-form input, .contact-form textarea {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            resize: vertical;
+        }
+
+        .contact-form button {
+            padding: 12px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 1em;
+        }
+
+        .contact-form button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #777;
+            font-size: 0.9em;
+        }
+
+        /* Optional: Background Image for CV */
+        /* Uncomment and replace the URL to add a background image */
+        /*
+        body {
+            background-image: url('YOUR_BACKGROUND_IMAGE_URL');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: #fff;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+        */
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            #download-pdf {
+                font-size: 1em;
+                padding: 12px;
+            }
+
+            .hero h1 {
+                font-size: 2em;
+            }
+
+            .hero p {
+                font-size: 1.2em;
+            }
+
+            .hero button {
+                padding: 12px 25px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+    
+    <!-- jsPDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navigation">
+        <div class="nav-logo" onclick="showSection('home')">[Your Name]</div>
+        <div class="nav-links">
+            <div class="nav-box active" data-section="home">Home</div>
+            <div class="nav-box" data-section="personal">Personal Info</div>
+            <div class="nav-box" data-section="education">Education</div>
+            <div class="nav-box" data-section="work">Work Experience</div>
+            <div class="nav-box" data-section="skills">Skills</div>
+            <div class="nav-box" data-section="contact">Contact</div>
+        </div>
+    </nav>
+
+    <!-- Home Section -->
+    <section id="home" class="section active">
+        <div class="hero">
+            <div class="hero-content">
+                <h1>Welcome to My CV</h1>
+                <p>Your introduction goes here. Provide a brief overview of who you are and your professional background.</p>
+                <button onclick="showSection('personal')">Learn More</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Personal Information Section -->
+    <section id="personal" class="section">
+        <h2 class="section-title">Personal Information</h2>
+        <div class="editable" id="name" contenteditable="true">Your Full Name</div>
+        <div class="editable" id="email" contenteditable="true">your.email@example.com</div>
+        <div class="editable" id="phone" contenteditable="true">+1 (234) 567-8901</div>
+        <div class="editable" id="bio" contenteditable="true">A brief bio about yourself. Highlight your professional background, key achievements, and what you bring to the table.</div>
+    </section>
+
+    <!-- Education Section -->
+    <section id="education" class="section">
+        <h2 class="section-title">Education</h2>
+        <div class="editable" id="education-details" contenteditable="true">
+            <strong>Degree:</strong> Bachelor of Science in Computer Science<br>
+            <strong>Institution:</strong> University of Technology<br>
+            <strong>Year:</strong> 2015 - 2019
+        </div>
+    </section>
+
+    <!-- Work Experience Section -->
+    <section id="work" class="section">
+        <h2 class="section-title">Work Experience</h2>
+        <div class="editable" id="work-details" contenteditable="true">
+            <strong>Job Title:</strong> Senior Software Engineer<br>
+            <strong>Company:</strong> Tech Innovators Inc.<br>
+            <strong>Duration:</strong> January 2020 - Present<br>
+            <strong>Responsibilities:</strong>
+            <ul>
+                <li>Lead a team of developers in creating scalable web applications.</li>
+                <li>Design and implement RESTful APIs.</li>
+                <li>Collaborate with cross-functional teams to define project requirements.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="section">
+        <h2 class="section-title">Skills</h2>
+        <div class="editable" id="skills-list" contenteditable="true">
+            <ul>
+                <li>JavaScript</li>
+                <li>React.js</li>
+                <li>Node.js</li>
+                <li>Python</li>
+                <li>Django</li>
+                <li>HTML5 & CSS3</li>
+                <li>RESTful APIs</li>
+                <li>Git & GitHub</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section">
+        <h2 class="section-title">Contact</h2>
+        <form class="contact-form" id="contact-form">
+            <label for="contactName">Name:</label>
+            <input type="text" id="contactName" required>
+
+            <label for="contactEmail">Email:</label>
+            <input type="email" id="contactEmail" required>
+
+            <label for="contactMessage">Message:</label>
+            <textarea id="contactMessage" rows="5" required></textarea>
+
+            <button type="submit">Send Message</button>
+        </form>
+    </section>
+
+    <!-- Download PDF Button -->
+    <button id="download-pdf"><i class="fas fa-download"></i> Download CV as PDF</button>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 [Your Name]. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Embedded JavaScript -->
+    <script>
+        // Wait for the DOM to load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize sections
+            initSections();
+
+            // Handle navigation clicks
+            const navBoxes = document.querySelectorAll('.nav-box');
+            navBoxes.forEach(box => {
+                box.addEventListener('click', () => {
+                    const section = box.getAttribute('data-section');
+                    showSection(section);
+                    setActiveNav(box);
+                });
+            });
+
+            // Load saved data
+            loadData();
+
+            // Handle contact form submission
+            const contactForm = document.getElementById('contact-form');
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Simple form validation
+                const name = document.getElementById('contactName').value.trim();
+                const email = document.getElementById('contactEmail').value.trim();
+                const message = document.getElementById('contactMessage').value.trim();
+
+                if (name && email && message) {
+                    // Implement your form submission logic here (e.g., send email via backend)
+                    alert('Thank you for your message! I will get back to you soon.');
+                    contactForm.reset();
+                } else {
+                    alert('Please fill in all fields.');
+                }
+            });
+
+            // Handle PDF download
+            document.getElementById('download-pdf').addEventListener('click', generatePDF);
+        });
+
+        // Function to initialize sections
+        function initSections() {
+            showSection('home');
+            animateHero();
+        }
+
+        // Function to show a specific section
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(sec => {
+                if (sec.id === sectionId) {
+                    sec.classList.add('active');
+                } else {
+                    sec.classList.remove('active');
+                }
+            });
+
+            // Scroll to section smoothly
+            const target = document.getElementById(sectionId);
+            if (target) {
+                window.scrollTo({
+                    top: target.offsetTop - 80, // Adjust for fixed navigation bar
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        // Function to set active navigation link
+        function setActiveNav(activeBox) {
+            const navBoxes = document.querySelectorAll('.nav-box');
+            navBoxes.forEach(box => {
+                box.classList.remove('active');
+            });
+            activeBox.classList.add('active');
+        }
+
+        // Function to save data to localStorage
+        function saveData() {
+            const data = {
+                name: document.getElementById('name').innerHTML,
+                email: document.getElementById('email').innerHTML,
+                phone: document.getElementById('phone').innerHTML,
+                bio: document.getElementById('bio').innerHTML,
+                education: document.getElementById('education-details').innerHTML,
+                work: document.getElementById('work-details').innerHTML,
+                skills: document.getElementById('skills-list').innerHTML
+            };
+            localStorage.setItem('cvData', JSON.stringify(data));
+        }
+
+        // Function to load data from localStorage
+        function loadData() {
+            const data = JSON.parse(localStorage.getItem('cvData'));
+            if (data) {
+                document.getElementById('name').innerHTML = data.name;
+                document.getElementById('email').innerHTML = data.email;
+                document.getElementById('phone').innerHTML = data.phone;
+                document.getElementById('bio').innerHTML = data.bio;
+                document.getElementById('education-details').innerHTML = data.education;
+                document.getElementById('work-details').innerHTML = data.work;
+                document.getElementById('skills-list').innerHTML = data.skills;
+            }
+
+            // Add event listeners to editable elements to save data on input
+            const editableElements = document.querySelectorAll('.editable');
+            editableElements.forEach(elem => {
+                elem.addEventListener('input', () => {
+                    saveData();
+                });
+            });
+        }
+
+        // Function to generate PDF
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            let yOffset = 10;
+
+            // Personal Information
+            doc.setFontSize(20);
+            doc.text("Curriculum Vitae", 105, yOffset, null, null, 'center');
+            yOffset += 10;
+
+            doc.setFontSize(16);
+            doc.text("Personal Information", 10, yOffset);
+            yOffset += 10;
+
+            doc.setFontSize(12);
+            const name = document.getElementById('name').innerText;
+            const email = document.getElementById('email').innerText;
+            const phone = document.getElementById('phone').innerText;
+            const bio = document.getElementById('bio').innerText;
+
+            doc.text(`Name: ${name}`, 10, yOffset);
+            yOffset += 7;
+            doc.text(`Email: ${email}`, 10, yOffset);
+            yOffset += 7;
+            doc.text(`Phone: ${phone}`, 10, yOffset);
+            yOffset += 7;
+            doc.text(`Bio: ${bio}`, 10, yOffset);
+            yOffset += 10;
+
+            // Education
+            doc.setFontSize(16);
+            doc.text("Education", 10, yOffset);
+            yOffset += 10;
+
+            doc.setFontSize(12);
+            const education = document.getElementById('education-details').innerText;
+            const splitEducation = doc.splitTextToSize(education, 180);
+            doc.text(splitEducation, 10, yOffset);
+            yOffset += splitEducation.length * 7 + 3;
+
+            // Work Experience
+            doc.setFontSize(16);
+            doc.text("Work Experience", 10, yOffset);
+            yOffset += 10;
+
+            doc.setFontSize(12);
+            const work = document.getElementById('work-details').innerText;
+            const splitWork = doc.splitTextToSize(work, 180);
+            doc.text(splitWork, 10, yOffset);
+            yOffset += splitWork.length * 7 + 3;
+
+            // Skills
+            doc.setFontSize(16);
+            doc.text("Skills", 10, yOffset);
+            yOffset += 10;
+
+            doc.setFontSize(12);
+            const skills = document.getElementById('skills-list').innerText;
+            const splitSkills = doc.splitTextToSize(skills, 180);
+            doc.text(splitSkills, 10, yOffset);
+            yOffset += splitSkills.length * 7 + 3;
+
+            // Footer
+            doc.setFontSize(10);
+            doc.text("Generated using Editable CV Template", 105, 290, null, null, 'center');
+
+            // Save the PDF
+            doc.save('Your_Name_CV.pdf');
+        }
+
+        // Function to animate hero elements
+        function animateHero() {
+            const hero = document.querySelector('.hero');
+            const h1 = hero.querySelector('h1');
+            const p = hero.querySelector('p');
+            const button = hero.querySelector('button');
+
+            // Add delay for animations
+            setTimeout(() => {
+                h1.style.opacity = '1';
+                h1.style.transform = 'translateY(0)';
+            }, 100);
+
+            setTimeout(() => {
+                p.style.opacity = '1';
+                p.style.transform = 'translateY(0)';
+            }, 500);
+
+            setTimeout(() => {
+                button.style.opacity = '1';
+            }, 900);
+        }
+    </script>
+</body>
+</html>
